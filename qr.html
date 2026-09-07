@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#145b39">
+  <title>Manufacturing Details Nutriverse | Maknova</title>
+  <meta name="description" content="Official manufacturing and FSSAI licence details for Nutriverse products.">
+  <link rel="canonical" href="https://thenutriverse.in/pages/manufacturing-details/">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <style>
+    :root {
+      --forest: #145b39;
+      --forest-deep: #0d4228;
+      --cream: #fffaf0;
+      --paper: #ffffff;
+      --sun: #f6bb2b;
+      --coral: #e76d4a;
+      --ink: #163427;
+      --muted: #617267;
+      --line: #dfebdf;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--cream); }
+    body {
+      min-width: 320px;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 100% 0, rgba(246, 187, 43, .33) 0 12%, transparent 12.2%),
+        radial-gradient(circle at 0 88%, rgba(113, 180, 132, .18) 0 14%, transparent 14.2%),
+        var(--cream);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      width: min(100% - 32px, 720px);
+      margin: 0 auto;
+      padding: 22px 0 34px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .brand { display: inline-flex; align-items: center; text-decoration: none; }
+    .brand img { display: block; width: 138px; height: auto; }
+    .scan-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--forest);
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .scan-label::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--coral); }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(26px, 7vw, 48px);
+      border-radius: 28px 28px 0 0;
+      color: var(--cream);
+      background: var(--forest);
+    }
+    .hero::before, .hero::after { content: ""; position: absolute; border-radius: 50%; pointer-events: none; }
+    .hero::before { width: 230px; height: 230px; right: -92px; top: -116px; border: 34px solid var(--sun); opacity: .95; }
+    .hero::after { width: 95px; height: 95px; right: 44px; bottom: -53px; background: var(--coral); }
+    .eyebrow {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 14px;
+      color: #d9edcf;
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 18px; height: 1px; background: currentColor; }
+    h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 10ch;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.2rem, 8vw, 4.3rem);
+      font-weight: 700;
+      letter-spacing: -.065em;
+      line-height: .92;
+    }
+    .hero p { position: relative; z-index: 1; max-width: 45ch; margin: 17px 0 0; color: rgba(255,255,255,.82); font-size: .95rem; line-height: 1.5; }
+
+    .details {
+      padding: clamp(22px, 5vw, 38px);
+      border: 1px solid var(--line);
+      border-top: 0;
+      border-radius: 0 0 28px 28px;
+      background: var(--paper);
+      box-shadow: 0 18px 46px rgba(20, 91, 57, .09);
+    }
+    .notice {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 11px 13px;
+      margin-bottom: 22px;
+      border: 1px solid #f3d68a;
+      border-radius: 12px;
+      color: #6e520d;
+      background: #fff8dc;
+      font-size: .78rem;
+      line-height: 1.4;
+    }
+    .notice strong { display: block; margin-bottom: 2px; }
+    .notice svg { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; }
+    .section-heading { margin: 0 0 14px; font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+    .licence {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px;
+      margin-bottom: 24px;
+      border: 1px solid #cde4d2;
+      border-radius: 18px;
+      background: #f3faf1;
+    }
+    .licence-meta { min-width: 0; }
+    .licence-label { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; color: var(--forest); font-size: .68rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+    .licence-label svg { width: 17px; height: 17px; }
+    .licence-number { display: block; overflow-wrap: anywhere; font-size: clamp(1rem, 4vw, 1.3rem); font-weight: 800; letter-spacing: .055em; line-height: 1.15; }
+    .copy-button {
+      flex: 0 0 auto;
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid #a6cdb0;
+      border-radius: 12px;
+      color: var(--forest);
+      background: #fff;
+      cursor: pointer;
+    }
+    .copy-button:hover { background: var(--sun); border-color: var(--sun); }
+    .copy-button:focus-visible, .action:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+    .copy-button svg { width: 19px; height: 19px; }
+
+    .info-list { margin: 0; }
+    .info-row { display: grid; grid-template-columns: 112px 1fr; gap: 14px; padding: 17px 0; border-top: 1px solid var(--line); }
+    .info-row:first-child { border-top: 0; padding-top: 0; }
+    dt { color: var(--muted); font-size: .7rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+    dd { margin: 0; font-size: .96rem; font-weight: 600; line-height: 1.5; }
+    .address { max-width: 39ch; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .action { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 11px 15px; border: 1px solid var(--forest); border-radius: 999px; color: var(--forest); background: #fff; font-size: .86rem; font-weight: 800; text-decoration: none; }
+    .action.primary { color: #fff; background: var(--forest); }
+    .action:hover { transform: translateY(-1px); box-shadow: 0 7px 16px rgba(20,91,57,.14); }
+    .action svg { width: 17px; height: 17px; }
+    .footer { margin: 22px 0 0; color: var(--muted); font-size: .75rem; line-height: 1.5; text-align: center; }
+
+    @media (max-width: 480px) {
+      .page { width: min(100% - 22px, 720px); padding-top: 14px; }
+      .brand img { width: 120px; }
+      .scan-label { font-size: .58rem; }
+      .hero, .details { border-radius: 22px; }
+      .hero { border-radius: 22px 22px 0 0; }
+      .details { border-radius: 0 0 22px 22px; }
+      .info-row { grid-template-columns: 1fr; gap: 5px; padding: 14px 0; }
+      .actions { display: grid; grid-template-columns: 1fr; }
+      .action { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+
+
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="https://thenutriverse.in/" aria-label="Nutriverse home"><img src="assets/logo.png" alt="Nutriverse"></a>
+      <span class="scan-label">Product information</span>
+    </header>
+
+    <section class="hero" aria-labelledby="page-title">
+      <!-- <p class="eyebrow">Official product record</p> -->
+      <h1 id="page-title">Made with care. <em>Shared clearly.</em></h1>
+      <p>Manufacturing information for your Nutriverse & Maknova product.</p>
+    </section>
+
+    <section class="details" aria-label="Manufacturing details">
+      <!-- <div class="notice" role="note">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M12 8v4m0 4h.01M10.3 3.9 2.9 17a2 2 0 0 0 1.74 3h14.72A2 2 0 0 0 21.1 17L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span><strong>Demo details</strong>Replace the licence number, legal name and address below with the exact information printed on your product pack before publishing.</span>
+      </div> -->
+
+      <h2 class="section-heading">Manufactured and Marketed by Nutriverse Organic Products Private Limited</h2>
+      <div class="licence">
+        <div class="licence-meta">
+          <span class="licence-label">FSSAI licence number</span>
+          <output id="licence-number" class="licence-number">11526999000644</output>
+        </div>
+        <button class="copy-button" type="button" aria-label="Copy FSSAI licence number" data-copy="10000000000000">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="1.8"/></svg>
+        </button>
+      </div>
+
+      <h2 class="section-heading">Manufacturing details</h2>
+      <dl class="info-list">
+        <div class="info-row"><dt>Manufactured by</dt><dd>NUTRIVERSE ORGANIC PRODUCTS PRIVATE
+LIMITED</dd></div>
+        <div class="info-row"><dt>Manufacturing unit</dt><dd class="address">Flat No:Gala No 225,
+Neelkanth Aurum, Block Sativali, Vasai,
+Palghar, Maharashtra-401208</dd></div>
+        <div class="info-row"><dt>Consumer care</dt><dd><a href="mailto:contact@thenutriverse.in">contact@thenutriverse.in</a></dd></div>
+      </dl>
+
+      <div class="actions">
+        <a class="action primary" href="https://thenutriverse.in/"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M3 11.5 12 4l9 7.5v8a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Visit Nutriverse</a>
+        <a class="action" href="mailto:contact@thenutriverse.in">Contact support</a>
+      </div>
+    </section>
+    <p class="footer">Thank you for choosing Nutriverse. Keep this page handy for product and manufacturing information.</p>
+  </main>
+  <script>
+    document.querySelector('.copy-button').addEventListener('click', async function () {
+      const button = this;
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy);
+        button.setAttribute('aria-label', 'FSSAI licence number copied');
+        setTimeout(() => button.setAttribute('aria-label', 'Copy FSSAI licence number'), 1800);
+      } catch (error) { window.prompt('Copy FSSAI licence number:', button.dataset.copy); }
+    });
+  </script>
+</body>
+</html>
