@@ -60,8 +60,9 @@
         <p class="section-kicker">${order.status === "paid" ? "Paid online" : order.payment || "Payment"}</p>
         <h2>${order.id}</h2>
         ${order.totals.lines.map((l) => `<p>${l.name} × ${l.qty} <strong style="float:right">${rupees(l.lineTotal)}</strong></p>`).join("")}
+        ${order.totals.discount ? `<p>Coupon ${order.totals.couponCode} <strong style="float:right">−${rupees(order.totals.discount)}</strong></p>` : ""}
         <p style="margin-top:16px">Total <strong style="float:right">${rupees(order.totals.total)}</strong></p>
-        <p class="subcopy" style="margin-top:16px">${order.customer.name}<br>${order.customer.address}<br>${order.customer.city}, ${order.customer.state} ${order.customer.pincode}<br>${order.customer.phone}</p>
+        <p class="subcopy" style="margin-top:16px">${order.customer.name}<br>${order.customer.line1 || order.customer.address}${order.customer.line2 ? "<br>" + order.customer.line2 : ""}${order.customer.line3 ? "<br>" + order.customer.line3 : ""}<br>${order.customer.district || order.customer.city}, ${order.customer.state} ${order.customer.pincode}<br>${order.customer.phone}</p>
         ${data.emailed ? `<p class="subcopy">We’ve emailed the order to the brand.</p>` : `<p class="subcopy">Ping us on WhatsApp so packing can start.</p>`}
         <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px">
           ${data.whatsappUrl ? `<a class="btn btn-dark" href="${data.whatsappUrl}" target="_blank" rel="noopener">Send on WhatsApp</a>` : ""}

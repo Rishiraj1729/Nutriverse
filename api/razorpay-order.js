@@ -1,4 +1,4 @@
-const { json, readBody, orderId, validCustomer, pricedCart } = require("../lib/orders");
+const { json, readBody, orderId, validCustomer, formatCustomer, pricedCart } = require("../lib/orders");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return json(res, 405, { error: "Method not allowed" });
@@ -11,9 +11,11 @@ module.exports = async (req, res) => {
 
   try {
     const body = await readBody(req);
-    const customerError = validCustomer(body.customer);
+    const customer = formatCustomer(body.customer);
+    const customerError = validCustomer(customer);
     if (customerError) return json(res, 400, { error: customerError });
-    const priced = await pricedCart(body.items);
+    const priced = await pricedCart(body.items, body.coupon, customer.phone);
+    if (priced.error) return json(res, 400, { error: priced.error });
     if (priced.error) return json(res, 400, { error: priced.error });
 
     const receipt = orderId();
@@ -30,8 +32,8 @@ module.exports = async (req, res) => {
         currency: "INR",
         receipt,
         notes: {
-          name: body.customer.name,
-          phone: body.customer.phone
+          name: customer.name,
+          phone: customer.phone
         }
       })
     });
@@ -46,7 +48,7 @@ module.exports = async (req, res) => {
       razorpayOrderId: data.id,
       amount,
       totals: priced.totals,
-      customer: body.customer
+      customer
     });
   } catch (err) {
     return json(res, 500, { error: "Could not start online payment." });

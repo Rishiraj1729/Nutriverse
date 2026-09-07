@@ -19,6 +19,7 @@
       btn.classList.toggle("active", btn.getAttribute("data-tab") === id);
     });
     document.getElementById("tab-skus").hidden = id !== "skus";
+    document.getElementById("tab-coupons").hidden = id !== "coupons";
     document.getElementById("tab-orders").hidden = id !== "orders";
   }
 
@@ -103,7 +104,7 @@
       return `<tr>
         <td><strong>${escapeHtml(o.id)}</strong><br><small>${lines}</small></td>
         <td>${new Date(o.created_at).toLocaleString("en-IN")}</td>
-        <td>${escapeHtml(c.name)}<br><small>${escapeHtml(c.phone)} · ${escapeHtml(c.email)}<br>${escapeHtml(c.address)}<br>${escapeHtml(c.city)} ${escapeHtml(c.pincode)}</small></td>
+        <td>${escapeHtml(c.name)}<br><small>${escapeHtml(c.phone)} · ${escapeHtml(c.email)}<br>${escapeHtml(c.line1 || c.address)}${c.line2 ? "<br>" + escapeHtml(c.line2) : ""}${c.line3 ? "<br>" + escapeHtml(c.line3) : ""}<br>${escapeHtml(c.district || c.city)}, ${escapeHtml(c.state)} ${escapeHtml(c.pincode)}</small></td>
         <td>${escapeHtml(o.payment)}</td>
         <td>${rupees(o.total)}</td>
         <td><select data-id="${escapeHtml(o.id)}">${opts}</select></td>
@@ -127,16 +128,39 @@
     return true;
   }
 
-  (async function () {
-    if (!(await NVAuth.isAdmin())) {
-      const u = await NVAuth.user();
-      if (!u) location.href = "login.html?next=admin.html";
-      else note("This dashboard is only for Admin_Nutriverse.");
+  async function loadCoupons() {
+    const res = await fetch("/api/admin-coupons", { headers });
+    const data = await res.json();
+    if (!res.ok) {
+      note(data.error || "Could not load coupons.");
       return;
     }
+    const tb = document.querySelector("#coupon-table tbody");
+    tb.innerHTML = (data.coupons || []).map((c) => {
+      const until = c.expires_at ? new Date(c.expires_at).toLocaleDateString("en-IN") : "No end date";
+      const used = Number(c.used) || 0;
+      const max = Number(c.max_redemptions) || 50;
+      return `
+      <tr data-coupon="${escapeHtml(c.code)}">
+        <td><strong>${escapeHtml(c.code)}</strong><br><small>${c.once_per_user ? "Once per customer" : "Reusable"}</small></td>
+        <td>₹${Number(c.amount)}</td>
+        <td>${escapeHtml(until)}</td>
+        <td>${used} / ${max}</td>
+        <td><label class="sku-toggle"><input type="checkbox" class="coupon-active" ${c.active ? "checked" : ""}> Live</label></td>
+        <td>
+          <button type="button" class="btn btn-outline coupon-save">Save</button>
+          <button type="button" class="sku-delete coupon-delete">Remove</button>
+        </td>
+      </tr>`;
+    }).join("") || `<tr><td colspan="6">No coupons yet. Create RD100 for ₹100 off.</td></tr>`;
+  }
+
+  async function bootDesk() {
     const token = await NVAuth.accessToken();
     headers = { Authorization: "Bearer " + token, "Content-Type": "application/json" };
-    await Promise.all([loadSkus(), loadOrders()]);
+    document.getElementById("admin-login").hidden = true;
+    document.getElementById("admin-app").hidden = false;
+    await Promise.all([loadSkus(), loadOrders(), loadCoupons()]);
 
     document.getElementById("sku-form").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -160,6 +184,72 @@
       const body = await res.json();
       if (!res.ok) note(body.error || "Could not save shipping.");
       else note("", "Shipping updated.");
+    });
+
+    const amountInput = document.getElementById("coupon-amount");
+    const codeInput = document.getElementById("coupon-code-admin");
+    amountInput.addEventListener("input", () => {
+      const n = Number(amountInput.value);
+      if (Number.isInteger(n) && n > 0 && !codeInput.dataset.touched) codeInput.value = "RD" + n;
+    });
+    codeInput.addEventListener("input", () => {
+      codeInput.dataset.touched = "1";
+    });
+
+    document.getElementById("coupon-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = new FormData(e.target);
+      const res = await fetch("/api/admin-coupons", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          amount: Number(data.get("amount")),
+          code: String(data.get("code") || "").trim(),
+          expires_at: String(data.get("expires_at") || "").trim(),
+          max_redemptions: Number(data.get("max_redemptions") || 50),
+          once_per_user: data.get("once_per_user") === "on"
+        })
+      });
+      const body = await res.json();
+      if (!res.ok) note(body.error || "Could not create coupon.");
+      else {
+        note("", (body.coupon && body.coupon.code) + " is live. ₹" + (body.coupon && body.coupon.amount) + " off the cart.");
+        e.target.reset();
+        delete codeInput.dataset.touched;
+        await loadCoupons();
+      }
+    });
+
+    document.querySelector("#coupon-table").addEventListener("click", async (e) => {
+      const tr = e.target.closest("tr[data-coupon]");
+      if (!tr) return;
+      const code = tr.getAttribute("data-coupon");
+      if (e.target.closest(".coupon-save")) {
+        const active = tr.querySelector(".coupon-active").checked;
+        const res = await fetch("/api/admin-coupons", {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify({ code, active })
+        });
+        const body = await res.json();
+        if (!res.ok) note(body.error || "Could not update coupon.");
+        else note("", "Coupon saved.");
+        return;
+      }
+      if (e.target.closest(".coupon-delete")) {
+        if (!confirm("Remove " + code + "?")) return;
+        const res = await fetch("/api/admin-coupons", {
+          method: "DELETE",
+          headers,
+          body: JSON.stringify({ code })
+        });
+        const body = await res.json();
+        if (!res.ok) note(body.error || "Could not delete coupon.");
+        else {
+          note("", "Coupon removed.");
+          await loadCoupons();
+        }
+      }
     });
 
     document.querySelector("#sku-table").addEventListener("click", async (e) => {
@@ -202,6 +292,31 @@
       const body = await patch.json();
       if (!patch.ok) note(body.error || "Update failed.");
       else note("", "Order status updated.");
+    });
+  }
+
+  (async function () {
+    if (await NVAuth.isAdmin()) {
+      await bootDesk();
+      return;
+    }
+    document.getElementById("admin-login").hidden = false;
+    document.getElementById("admin-login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const loginErr = document.getElementById("admin-login-error");
+      loginErr.textContent = "";
+      const data = new FormData(e.target);
+      try {
+        await NVAuth.signIn(data.get("user"), data.get("password"));
+        if (!(await NVAuth.isAdmin())) {
+          loginErr.textContent = "That login is not the admin desk.";
+          await NVAuth.signOut();
+          return;
+        }
+        await bootDesk();
+      } catch (ex) {
+        loginErr.textContent = ex.message || "Could not log in.";
+      }
     });
   })();
 })();

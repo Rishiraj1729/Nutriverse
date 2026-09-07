@@ -136,3 +136,29 @@ grant select on public.products to anon, authenticated;
 grant insert, update, delete on public.products to authenticated;
 grant select on public.store_settings to anon, authenticated;
 grant update on public.store_settings to authenticated;
+
+create table if not exists public.coupons (
+  code text primary key,
+  amount integer not null check (amount > 0 and amount < 100000),
+  active boolean not null default true,
+  expires_at timestamptz,
+  max_redemptions integer not null default 50,
+  once_per_user boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+alter table public.coupons enable row level security;
+
+drop policy if exists coupons_public_read on public.coupons;
+create policy coupons_public_read on public.coupons
+  for select to anon, authenticated
+  using (active = true);
+
+drop policy if exists coupons_admin_all on public.coupons;
+create policy coupons_admin_all on public.coupons
+  for all to authenticated
+  using (public.is_store_admin())
+  with check (public.is_store_admin());
+
+grant select on public.coupons to anon, authenticated;
+grant insert, update, delete on public.coupons to authenticated;

@@ -122,7 +122,7 @@
       return subtotal >= SHIPPING.freeAbove ? 0 : SHIPPING.flat;
     }
 
-    function totalsFromItems(items) {
+    function totalsFromItems(items, coupon) {
       const lines = [];
       let subtotal = 0;
       for (const item of items) {
@@ -141,20 +141,34 @@
         });
       }
       const shipping = shippingFor(subtotal);
-      return {
+      const base = {
         lines,
         subtotal,
         shipping,
+        discount: 0,
+        couponCode: "",
         total: subtotal + shipping,
         freeShippingAt: SHIPPING.freeAbove
       };
+      return applyCouponToTotals(base, coupon);
+    }
+
+    function applyCouponToTotals(totals, coupon) {
+      const amount = coupon ? Math.max(0, Number(coupon.amount) || 0) : 0;
+      if (!amount) return totals;
+      const discount = Math.min(amount, totals.subtotal);
+      return Object.assign({}, totals, {
+        discount,
+        couponCode: String(coupon.code || "").toUpperCase(),
+        total: Math.max(1, totals.subtotal - discount + totals.shipping)
+      });
     }
 
     function rupees(n) {
       return "₹" + Number(n).toLocaleString("en-IN");
     }
 
-    return { PRODUCTS, SHIPPING, getProduct, shippingFor, totalsFromItems, rupees };
+    return { PRODUCTS, SHIPPING, getProduct, shippingFor, totalsFromItems, applyCouponToTotals, rupees };
   }
 
   const catalog = makeCatalog(DEFAULT_PRODUCTS, DEFAULT_SHIPPING);

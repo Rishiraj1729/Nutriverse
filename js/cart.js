@@ -94,10 +94,25 @@
     if (overlay) overlay.hidden = true;
   }
 
+  function readCoupon() {
+    try {
+      const raw = JSON.parse(localStorage.getItem("nv_coupon") || "null");
+      return raw && raw.code && raw.amount ? raw : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeCoupon(coupon) {
+    if (!coupon) localStorage.removeItem("nv_coupon");
+    else localStorage.setItem("nv_coupon", JSON.stringify(coupon));
+    render();
+  }
+
   function render() {
     if (!window.NV) return;
     const items = readCart();
-    const totals = NV.totalsFromItems(items);
+    const totals = NV.totalsFromItems(items, readCoupon());
     $$(".cart-count").forEach((el) => {
       el.textContent = String(count());
       el.hidden = count() === 0;
@@ -133,9 +148,19 @@
       ? "Free shipping"
       : `${NV.rupees(totals.shipping)} shipping · free over ${NV.rupees(totals.freeShippingAt)}`;
 
+    const coupon = readCoupon();
+    const couponRow = totals.discount
+      ? `<span>Coupon ${coupon.code}</span><strong>−${NV.rupees(totals.discount)}</strong>`
+      : "";
+
     foot.innerHTML = `
+      <div class="coupon-row">
+        <input id="coupon-code" type="text" maxlength="20" placeholder="Coupon e.g. RD100" value="${coupon ? coupon.code : ""}" aria-label="Coupon code">
+        <button type="button" class="btn btn-outline" data-apply-coupon>${coupon ? "Change" : "Apply"}</button>
+      </div>
       <div class="cart-totals">
         <span>Subtotal</span><strong>${NV.rupees(totals.subtotal)}</strong>
+        ${couponRow}
         <span>Shipping</span><strong>${shipNote}</strong>
         <span>Total</span><strong>${NV.rupees(totals.total)}</strong>
       </div>
@@ -169,11 +194,34 @@
         return;
       }
       const rm = e.target.closest("[data-remove]");
-      if (rm) setQty(rm.getAttribute("data-remove"), 0);
+      if (rm) {
+        setQty(rm.getAttribute("data-remove"), 0);
+        return;
+      }
+      if (e.target.closest("[data-apply-coupon]")) {
+        e.preventDefault();
+        const input = $("#coupon-code");
+        const code = input ? String(input.value || "").trim() : "";
+        if (!code) {
+          writeCoupon(null);
+          return;
+        }
+        fetch("/api/coupon?code=" + encodeURIComponent(code))
+          .then((r) => r.json().then((body) => ({ ok: r.ok, body })))
+          .then(({ ok, body }) => {
+            if (!ok) {
+              writeCoupon(null);
+              alert(body.error || "That coupon is not valid.");
+              return;
+            }
+            writeCoupon(body.coupon);
+          })
+          .catch(() => alert("Could not check the coupon. Try again."));
+      }
     });
   }
 
-  window.NVCart = { add, readCart, count, openCart, closeCart, WHATSAPP };
+  window.NVCart = { add, readCart, readCoupon, count, openCart, closeCart, WHATSAPP };
 
   injectDrawer();
   ensureCartButton();

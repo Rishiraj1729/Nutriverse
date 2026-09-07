@@ -438,6 +438,19 @@ button {
   font-size: 14px;
 }
 
+.coupon-row {
+  display: flex;
+  gap: 8px;
+}
+
+.coupon-row input {
+  flex: 1;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font: inherit;
+}
+
 .price-row {
   display: flex;
   align-items: center;

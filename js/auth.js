@@ -92,19 +92,15 @@
     return Boolean(cfg.adminEmail && email === String(cfg.adminEmail).toLowerCase());
   }
 
-  function injectLink(sessionObj, cfg) {
+  function injectLink(sessionObj) {
     if (document.querySelector(".account-link")) return;
+    if (!(sessionObj && sessionObj.user)) return;
     const inner = document.querySelector(".header-inner");
     if (!inner) return;
     const a = document.createElement("a");
     a.className = "account-link";
-    if (sessionObj && sessionObj.user) {
-      a.href = "account.html";
-      a.textContent = "Account";
-    } else {
-      a.href = "login.html";
-      a.textContent = "Log in";
-    }
+    a.href = "account.html";
+    a.textContent = "Account";
     const actions = document.querySelector(".header-actions") || inner;
     const cart = actions.querySelector("[data-open-cart]");
     if (cart) actions.insertBefore(a, cart);

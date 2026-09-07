@@ -33,11 +33,23 @@
     <section class="page-hero">
       <p class="section-kicker">Dashboard</p>
       <h1>STORE DESK.</h1>
-      <p class="subcopy" style="margin-top:12px">Log in with userid <strong>Admin_Nutriverse</strong> to manage SKUs and orders.</p>
+      <p class="subcopy" style="margin-top:12px">Userid <strong>Admin_Nutriverse</strong>. Manage SKUs, coupons, and orders here.</p>
     </section>
 
+    <section id="admin-login" class="auth-card" hidden>
+      <h2>Enter the desk</h2>
+      <form id="admin-login-form" style="margin-top:16px">
+        <div class="field"><label for="admin-user">Userid</label><input id="admin-user" name="user" autocomplete="username" required></div>
+        <div class="field"><label for="admin-pass">Password</label><input id="admin-pass" name="password" type="password" autocomplete="current-password" required></div>
+        <p class="form-error" id="admin-login-error"></p>
+        <button class="btn btn-dark" type="submit">Continue</button>
+      </form>
+    </section>
+
+    <div id="admin-app" hidden>
     <div class="admin-tabs" role="tablist">
       <button type="button" class="admin-tab active" data-tab="skus">SKUs &amp; prices</button>
+      <button type="button" class="admin-tab" data-tab="coupons">Coupons</button>
       <button type="button" class="admin-tab" data-tab="orders">Orders</button>
     </div>
     <p class="form-error" id="admin-error"></p>
@@ -117,6 +129,52 @@
       </div>
     </section>
 
+    <section id="tab-coupons" class="admin-panel" hidden>
+      <form class="sku-form" id="coupon-form">
+        <h2>Generate a coupon</h2>
+        <p class="subcopy">₹100 off becomes <strong>RD100</strong>. Shoppers enter that code at checkout and it comes off the cart total.</p>
+        <div class="sku-form-grid" style="margin-top:14px">
+          <div class="field">
+            <label for="coupon-amount">Discount (₹)</label>
+            <input id="coupon-amount" name="amount" type="number" min="1" step="1" required placeholder="100">
+          </div>
+          <div class="field">
+            <label for="coupon-code-admin">Code</label>
+            <input id="coupon-code-admin" name="code" placeholder="RD100">
+          </div>
+          <div class="field">
+            <label for="coupon-expires">Valid until</label>
+            <input id="coupon-expires" name="expires_at" type="date">
+          </div>
+          <div class="field">
+            <label for="coupon-max">Max customers</label>
+            <input id="coupon-max" name="max_redemptions" type="number" min="1" step="1" value="50">
+          </div>
+          <div class="field">
+            <label class="sku-toggle" style="margin-top:28px"><input type="checkbox" name="once_per_user" checked> Once per customer</label>
+          </div>
+          <div class="field sku-form-action">
+            <button type="submit" class="btn btn-dark">Create coupon</button>
+          </div>
+        </div>
+      </form>
+      <div class="table-wrap">
+        <table class="admin-table" id="coupon-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Off the cart</th>
+              <th>Validity</th>
+              <th>Used</th>
+              <th>Live</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
     <section id="tab-orders" class="admin-panel" hidden>
       <div class="table-wrap">
         <table class="admin-table" id="admin-table">
@@ -134,6 +192,7 @@
         </table>
       </div>
     </section>
+    </div>
   </main>
 
   <script src="js/products.js"></script>
