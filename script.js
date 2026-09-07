@@ -39,13 +39,12 @@
     });
   });
 
-  const cards = $$("[data-cat]");
   $$(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       $$(".filter-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       const filter = btn.dataset.filter;
-      cards.forEach((card) => {
+      $$("[data-cat]").forEach((card) => {
         card.style.display = filter === "all" || card.dataset.cat === filter ? "" : "none";
       });
     });
@@ -56,6 +55,11 @@
     const match = $(`.filter-btn[data-filter="${hash}"]`);
     if (match) match.click();
   }
+
+  document.addEventListener("nv-catalog", () => {
+    const active = document.querySelector(".filter-btn.active");
+    if (active) active.click();
+  });
 
   const videoEl = $(".hero-video-element");
   const poster = $(".hero-video-poster");

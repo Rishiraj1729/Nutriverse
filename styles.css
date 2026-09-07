@@ -221,6 +221,108 @@ button {
   font: inherit;
 }
 
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.admin-tab {
+  border: 1.5px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-tab.active,
+.admin-tab:hover {
+  background: var(--forest);
+  color: #fff;
+  border-color: var(--forest);
+}
+
+.admin-ok {
+  color: var(--forest);
+  font-size: 14px;
+  min-height: 1.2em;
+  margin-bottom: 8px;
+}
+
+.sku-form {
+  background: #fff;
+  border-radius: 24px;
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.sku-form h2 {
+  margin-bottom: 14px;
+}
+
+.sku-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.sku-form-wide {
+  grid-column: 1 / -1;
+}
+
+.sku-form-action {
+  display: flex;
+  align-items: flex-end;
+}
+
+.sku-cell {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.sku-cell img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--cream);
+}
+
+.sku-price {
+  width: 96px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  padding: 8px;
+  font: inherit;
+}
+
+.sku-toggle {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.sku-delete {
+  margin-left: 8px;
+  background: transparent;
+  color: #b42318;
+  border: 0;
+  padding: 8px;
+  font: inherit;
+  cursor: pointer;
+}
+
+@media (max-width: 800px) {
+  .sku-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .cart-count {
   min-width: 20px;
   height: 20px;

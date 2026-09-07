@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="announce">Admin · orders</div>
+  <div class="announce">Admin · SKUs &amp; orders</div>
   <header class="site-header">
     <div class="wrap header-inner">
       <a href="/" class="logo"><img src="assets/logo.png" alt="Nutriverse"></a>
@@ -32,76 +32,113 @@
   <main class="wrap">
     <section class="page-hero">
       <p class="section-kicker">Dashboard</p>
-      <h1>ORDERS.</h1>
-      <p class="subcopy" style="margin-top:12px">Log in as <strong>contact@thenutriverse.in</strong> to manage status.</p>
+      <h1>STORE DESK.</h1>
+      <p class="subcopy" style="margin-top:12px">Log in with userid <strong>Admin_Nutriverse</strong> to manage SKUs and orders.</p>
     </section>
-    <p class="form-error" id="admin-error"></p>
-    <div class="table-wrap">
-      <table class="admin-table" id="admin-table">
-        <thead>
-          <tr>
-            <th>Order</th>
-            <th>When</th>
-            <th>Customer</th>
-            <th>Pay</th>
-            <th>Total</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+
+    <div class="admin-tabs" role="tablist">
+      <button type="button" class="admin-tab active" data-tab="skus">SKUs &amp; prices</button>
+      <button type="button" class="admin-tab" data-tab="orders">Orders</button>
     </div>
+    <p class="form-error" id="admin-error"></p>
+    <p class="admin-ok" id="admin-ok"></p>
+
+    <section id="tab-skus" class="admin-panel">
+      <form class="sku-form" id="shipping-form">
+        <h2>Shipping</h2>
+        <div class="sku-form-grid">
+          <div class="field">
+            <label for="ship-flat">Flat shipping (₹)</label>
+            <input id="ship-flat" name="shipping_flat" type="number" min="0" step="1" required>
+          </div>
+          <div class="field">
+            <label for="ship-free">Free above (₹)</label>
+            <input id="ship-free" name="free_above" type="number" min="0" step="1" required>
+          </div>
+          <div class="field sku-form-action">
+            <button type="submit" class="btn btn-dark">Save shipping</button>
+          </div>
+        </div>
+      </form>
+
+      <form class="sku-form" id="sku-form">
+        <h2>Add a SKU</h2>
+        <div class="sku-form-grid">
+          <div class="field">
+            <label for="sku-name">Name</label>
+            <input id="sku-name" name="name" required placeholder="Peri Punch 50g">
+          </div>
+          <div class="field">
+            <label for="sku-id">SKU id</label>
+            <input id="sku-id" name="id" placeholder="auto from name">
+          </div>
+          <div class="field">
+            <label for="sku-price">Price (₹)</label>
+            <input id="sku-price" name="price" type="number" min="1" step="1" required>
+          </div>
+          <div class="field">
+            <label for="sku-category">Category</label>
+            <select id="sku-category" name="category">
+              <option value="makhana">Flavoured makhana</option>
+              <option value="cookies">Cookies</option>
+              <option value="raw">Raw &amp; bulk</option>
+              <option value="maknova">Maknova</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sku-unit">Unit</label>
+            <input id="sku-unit" name="unit" placeholder="pack" value="pack">
+          </div>
+          <div class="field">
+            <label for="sku-image">Image</label>
+            <input id="sku-image" name="image" placeholder="assets/product.png or https://…">
+          </div>
+          <div class="field sku-form-wide">
+            <label for="sku-blurb">Blurb</label>
+            <input id="sku-blurb" name="blurb" placeholder="Short line on the product card">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-dark" style="margin-top:12px">Add to store</button>
+      </form>
+
+      <div class="table-wrap">
+        <table class="admin-table" id="sku-table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Category</th>
+              <th>Price ₹</th>
+              <th>On store</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-orders" class="admin-panel" hidden>
+      <div class="table-wrap">
+        <table class="admin-table" id="admin-table">
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>When</th>
+              <th>Customer</th>
+              <th>Pay</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
   </main>
 
   <script src="js/products.js"></script>
   <script src="js/auth.js"></script>
   <script src="script.js"></script>
-  <script>
-    const statuses = ["pending", "paid", "packed", "shipped", "delivered", "cancelled"];
-    (async function () {
-      const err = document.getElementById("admin-error");
-      if (!(await NVAuth.isAdmin())) {
-        const u = await NVAuth.user();
-        if (!u) location.href = "login.html?next=admin.html";
-        else err.textContent = "This dashboard is only for the brand login (contact@thenutriverse.in).";
-        return;
-      }
-      const token = await NVAuth.accessToken();
-      const headers = { Authorization: "Bearer " + token, "Content-Type": "application/json" };
-      const res = await fetch("/api/admin-orders", { headers });
-      const data = await res.json();
-      if (!res.ok) {
-        err.textContent = data.error || "Could not load orders.";
-        return;
-      }
-      const rupees = window.NV ? NV.rupees : (n) => "₹" + n;
-      const tb = document.querySelector("#admin-table tbody");
-      tb.innerHTML = (data.orders || []).map((o) => {
-        const c = o.customer || {};
-        const opts = statuses.map((s) => `<option value="${s}" ${s === o.status ? "selected" : ""}>${s}</option>`).join("");
-        return `<tr>
-          <td><strong>${o.id}</strong><br><small>${(o.items || []).map((i) => i.name + " × " + i.qty).join(", ")}</small></td>
-          <td>${new Date(o.created_at).toLocaleString("en-IN")}</td>
-          <td>${c.name || ""}<br><small>${c.phone || ""} · ${c.city || ""}</small></td>
-          <td>${o.payment}</td>
-          <td>${rupees(o.total)}</td>
-          <td><select data-id="${o.id}">${opts}</select></td>
-        </tr>`;
-      }).join("") || `<tr><td colspan="6">No orders yet.</td></tr>`;
-
-      tb.addEventListener("change", async (e) => {
-        const sel = e.target.closest("select[data-id]");
-        if (!sel) return;
-        const patch = await fetch("/api/admin-orders", {
-          method: "PATCH",
-          headers,
-          body: JSON.stringify({ id: sel.getAttribute("data-id"), status: sel.value })
-        });
-        const body = await patch.json();
-        if (!patch.ok) err.textContent = body.error || "Update failed.";
-        else err.textContent = "";
-      });
-    })();
-  </script>
+  <script src="js/admin.js"></script>
 </body>
 </html>

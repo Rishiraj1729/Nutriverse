@@ -42,7 +42,7 @@
         <button type="button" class="filter-btn" id="tab-signup">Create account</button>
       </div>
       <form id="login-form">
-        <div class="field"><label>Email</label><input type="email" name="email" required autocomplete="email"></div>
+        <div class="field"><label>Email or admin ID</label><input type="text" name="email" required autocomplete="username" placeholder="you@email.com or Admin_Nutriverse"></div>
         <div class="field"><label>Password</label><input type="password" name="password" required minlength="6" autocomplete="current-password"></div>
         <p class="form-error" id="login-error"></p>
         <button class="btn btn-dark" type="submit">Log in</button>
@@ -81,8 +81,13 @@
       err.textContent = "";
       const data = new FormData(e.target);
       try {
-        await NVAuth.signIn(data.get("email"), data.get("password"));
-        location.href = next;
+        const id = String(data.get("email") || "").trim();
+        await NVAuth.signIn(id, data.get("password"));
+        if (id.toLowerCase() === "admin_nutriverse" && (!next || next === "account.html")) {
+          location.href = "admin.html";
+        } else {
+          location.href = next;
+        }
       } catch (ex) { err.textContent = ex.message; }
     };
     document.getElementById("signup-form").onsubmit = async (e) => {
@@ -90,6 +95,11 @@
       const err = document.getElementById("signup-error");
       err.textContent = "";
       const data = new FormData(e.target);
+      const email = String(data.get("email") || "").trim().toLowerCase();
+      if (email === "admin_nutriverse@thenutriverse.in" || email === "admin_nutriverse") {
+        err.textContent = "That login is reserved. Use Log in.";
+        return;
+      }
       try {
         const result = await NVAuth.signUp(data.get("email"), data.get("password"), data.get("name"));
         if (result.session) location.href = next;

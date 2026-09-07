@@ -62,9 +62,10 @@
     return data;
   }
 
-  async function signIn(email, password) {
+  async function signIn(identifier, password) {
     const sb = await getClient();
     if (!sb) throw new Error("Accounts are not configured yet.");
+    const email = resolveLogin(identifier);
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
     if (error) throw new Error(error.message);
     return data;
@@ -75,10 +76,20 @@
     if (sb) await sb.auth.signOut();
   }
 
+  function resolveLogin(identifier) {
+    const value = String(identifier || "").trim();
+    if (value.toLowerCase() === "admin_nutriverse") return "admin_nutriverse@thenutriverse.in";
+    return value;
+  }
+
   async function isAdmin() {
-    const cfg = await loadConfig();
     const u = await user();
-    return Boolean(u && cfg.adminEmail && u.email && u.email.toLowerCase() === cfg.adminEmail.toLowerCase());
+    if (!u) return false;
+    if (u.app_metadata && String(u.app_metadata.role || "").toLowerCase() === "admin") return true;
+    const email = String(u.email || "").toLowerCase();
+    if (email === "admin_nutriverse@thenutriverse.in") return true;
+    const cfg = await loadConfig();
+    return Boolean(cfg.adminEmail && email === String(cfg.adminEmail).toLowerCase());
   }
 
   function injectLink(sessionObj, cfg) {

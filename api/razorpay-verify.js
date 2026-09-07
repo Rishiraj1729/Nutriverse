@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
     const body = await readBody(req);
     const customerError = validCustomer(body.customer);
     if (customerError) return json(res, 400, { error: customerError });
-    const priced = pricedCart(body.items);
+    const priced = await pricedCart(body.items);
     if (priced.error) return json(res, 400, { error: priced.error });
 
     const orderId = String(body.razorpay_order_id || "");

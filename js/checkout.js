@@ -146,6 +146,7 @@
   });
 
   renderSummary();
+  document.addEventListener("nv-catalog", renderSummary);
 
   if (window.NVAuth) {
     NVAuth.user().then((u) => {

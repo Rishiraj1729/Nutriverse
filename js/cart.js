@@ -179,4 +179,5 @@
   ensureCartButton();
   bind();
   render();
+  document.addEventListener("nv-catalog", render);
 })();
