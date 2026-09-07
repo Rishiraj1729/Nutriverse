@@ -68,17 +68,12 @@
 
         <h2 style="margin-top:20px">Pay</h2>
         <div class="pay-options">
-          <label class="pay-option">
-            <input type="radio" name="pay" value="cod" checked>
-            <span><strong>Cash on Delivery</strong><br>Pay when the packet arrives. Works now.</span>
-          </label>
-          <label class="pay-option" id="upi-option">
-            <input type="radio" name="pay" value="online">
-            <span><strong>UPI / cards</strong><br><small id="upi-note">Checking Razorpay…</small></span>
-          </label>
+          <div class="pay-option" id="upi-option">
+            <span><strong>UPI / cards / netbanking</strong><br><small id="upi-note">Checking Razorpay…</small></span>
+          </div>
         </div>
         <p class="form-error" id="form-error"></p>
-        <button type="submit" class="btn btn-dark" id="place-order">Place order</button>
+        <button type="submit" class="btn btn-dark" id="place-order" disabled>Pay now</button>
       </form>
 
       <aside class="order-box" id="summary-box">

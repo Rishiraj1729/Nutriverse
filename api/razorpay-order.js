@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
   const keyId = process.env.RAZORPAY_KEY_ID;
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
   if (!keyId || !keySecret) {
-    return json(res, 400, { error: "Online pay is not enabled yet. Use Cash on Delivery, or add Razorpay keys in Vercel." });
+    return json(res, 400, { error: "Razorpay is not configured. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in Vercel." });
   }
 
   try {

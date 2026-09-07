@@ -409,9 +409,11 @@ button {
   cursor: pointer;
 }
 
-.pay-option:has(input:checked) {
+.pay-option:has(input:checked),
+.pay-option#upi-option {
   border-color: var(--forest);
   background: #eef6ef;
+  cursor: default;
 }
 
 .form-error {

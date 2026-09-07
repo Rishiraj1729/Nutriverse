@@ -4,8 +4,7 @@
   const summary = document.getElementById("summary-box");
   const submitBtn = document.getElementById("place-order");
   const upiNote = document.getElementById("upi-note");
-  const upiOption = document.getElementById("upi-option");
-  let payConfig = { enabled: false, keyId: "" };
+  let payReady = false;
 
   function customerFromForm() {
     const data = new FormData(form);
@@ -59,19 +58,9 @@
     return headers;
   }
 
-  async function placeCod() {
-    const res = await fetch("/api/order", {
-      method: "POST",
-      headers: await authHeaders(),
-      body: JSON.stringify(payload())
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Could not place order.");
-    finish(data);
-  }
-
   async function placeOnline() {
-    if (!window.Razorpay) throw new Error("Razorpay failed to load. Try Cash on Delivery.");
+    if (!payReady) throw new Error("Razorpay is not configured yet. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in Vercel.");
+    if (!window.Razorpay) throw new Error("Razorpay failed to load. Refresh and try again.");
     const start = await fetch("/api/razorpay-order", {
       method: "POST",
       headers: await authHeaders(),
@@ -116,25 +105,26 @@
       rzp.on("payment.failed", () => reject(new Error("Payment failed or was cancelled.")));
       rzp.open();
       submitBtn.disabled = false;
-      submitBtn.textContent = "Place order";
+      submitBtn.textContent = "Pay now";
     });
   }
 
   fetch("/api/pay-config")
     .then((r) => r.json())
     .then((cfg) => {
-      payConfig = cfg;
-      if (cfg.enabled) {
+      payReady = Boolean(cfg.enabled);
+      if (payReady) {
         upiNote.textContent = "UPI, cards, netbanking via Razorpay.";
+        submitBtn.disabled = false;
       } else {
-        upiNote.textContent = "Add Razorpay keys in Vercel to enable UPI / cards.";
-        const input = upiOption.querySelector("input");
-        input.disabled = true;
+        upiNote.textContent = "Add Razorpay keys in Vercel to take payments.";
+        submitBtn.disabled = true;
       }
     })
     .catch(() => {
-      upiNote.textContent = "Online pay unavailable right now. Use Cash on Delivery.";
-      upiOption.querySelector("input").disabled = true;
+      payReady = false;
+      upiNote.textContent = "Payment is unavailable right now. Try again shortly.";
+      submitBtn.disabled = true;
     });
 
   form.addEventListener("submit", async (e) => {
@@ -145,15 +135,13 @@
       return;
     }
     submitBtn.disabled = true;
-    submitBtn.textContent = "Placing…";
+    submitBtn.textContent = "Opening Razorpay…";
     try {
-      const method = (new FormData(form).get("pay") || "cod");
-      if (method === "online") await placeOnline();
-      else await placeCod();
+      await placeOnline();
     } catch (err) {
       errorEl.textContent = err.message || "Something went wrong.";
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Place order";
+      submitBtn.disabled = !payReady;
+      submitBtn.textContent = "Pay now";
     }
   });
 

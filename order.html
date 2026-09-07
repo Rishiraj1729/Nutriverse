@@ -34,7 +34,7 @@
     <section class="order-hero">
       <p class="section-kicker">Thank you</p>
       <h1 class="display">ORDER LOCKED IN.</h1>
-      <p class="subcopy" id="order-lead" style="margin:16px auto">If you just paid or chose COD, your details are here.</p>
+      <p class="subcopy" id="order-lead" style="margin:16px auto">If payment went through, your details are here.</p>
     </section>
     <div class="order-box" id="order-box" style="max-width:640px;margin:0 auto 80px"></div>
   </main>
@@ -57,7 +57,7 @@
       const rupees = window.NV ? NV.rupees : (n) => "₹" + n;
       lead.textContent = order.payment + " · " + order.id;
       box.innerHTML = `
-        <p class="section-kicker">${order.status === "paid" ? "Paid" : "Cash on Delivery"}</p>
+        <p class="section-kicker">${order.status === "paid" ? "Paid online" : order.payment || "Payment"}</p>
         <h2>${order.id}</h2>
         ${order.totals.lines.map((l) => `<p>${l.name} × ${l.qty} <strong style="float:right">${rupees(l.lineTotal)}</strong></p>`).join("")}
         <p style="margin-top:16px">Total <strong style="float:right">${rupees(order.totals.total)}</strong></p>
