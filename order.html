@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order confirmed | Nutriverse</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500;1,9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="announce">Order in · we’ll pack the crunch</div>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a href="/" class="logo" aria-label="Nutriverse home"><img src="assets/logo.png" alt="Nutriverse"></a>
+      <nav class="nav-desktop">
+        <a href="/">Home</a>
+        <a href="products.html">Products</a>
+      </nav>
+      <a class="header-cta" href="products.html">Shop again</a>
+      <button type="button" class="cart-btn" data-open-cart aria-label="Open cart">Cart <span class="cart-count">0</span></button>
+      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+    </div>
+    <nav class="nav-mobile">
+      <a href="/">Home</a>
+      <a href="products.html">Products</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="order-hero">
+      <p class="section-kicker">Thank you</p>
+      <h1 class="display">ORDER LOCKED IN.</h1>
+      <p class="subcopy" id="order-lead" style="margin:16px auto">If you just paid or chose COD, your details are here.</p>
+    </section>
+    <div class="order-box" id="order-box" style="max-width:640px;margin:0 auto 80px"></div>
+  </main>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="script.js"></script>
+  <script>
+    (function () {
+      const box = document.getElementById("order-box");
+      const lead = document.getElementById("order-lead");
+      let data = null;
+      try { data = JSON.parse(sessionStorage.getItem("nv_last_order") || "null"); } catch (e) { data = null; }
+      if (!data || !data.order) {
+        box.innerHTML = `<p>No order found in this browser. If you just checked out, email <a href="mailto:contact@thenutriverse.in">contact@thenutriverse.in</a>.</p>`;
+        return;
+      }
+      const order = data.order;
+      const rupees = window.NV ? NV.rupees : (n) => "₹" + n;
+      lead.textContent = order.payment + " · " + order.id;
+      box.innerHTML = `
+        <p class="section-kicker">${order.status === "paid" ? "Paid" : "Cash on Delivery"}</p>
+        <h2>${order.id}</h2>
+        ${order.totals.lines.map((l) => `<p>${l.name} × ${l.qty} <strong style="float:right">${rupees(l.lineTotal)}</strong></p>`).join("")}
+        <p style="margin-top:16px">Total <strong style="float:right">${rupees(order.totals.total)}</strong></p>
+        <p class="subcopy" style="margin-top:16px">${order.customer.name}<br>${order.customer.address}<br>${order.customer.city}, ${order.customer.state} ${order.customer.pincode}<br>${order.customer.phone}</p>
+        ${data.emailed ? `<p class="subcopy">We’ve emailed the order to the brand.</p>` : `<p class="subcopy">Ping us on WhatsApp so packing can start.</p>`}
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px">
+          ${data.whatsappUrl ? `<a class="btn btn-dark" href="${data.whatsappUrl}" target="_blank" rel="noopener">Send on WhatsApp</a>` : ""}
+          <a class="btn btn-outline" href="products.html">Shop more</a>
+        </div>
+      `;
+    })();
+  </script>
+</body>
+</html>

@@ -146,17 +146,20 @@
         <a href="about.html">About</a>
         <a href="maknova.html">Maknova</a>
       </nav>
-      <a class="header-cta" href="https://www.amazon.in/s?k=Nutriverse+Makhana" target="_blank" rel="noopener">Shop now →</a>
-      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span>
-      </button>
+      <div class="header-actions">
+        <button type="button" class="cart-btn" data-open-cart aria-label="Open cart">Cart <span class="cart-count">0</span></button>
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span>
+        </button>
+      </div>
     </div>
     <nav class="nav-mobile" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="products.html">Products</a>
       <a href="about.html">About</a>
       <a href="maknova.html">Maknova</a>
-      <a href="https://www.amazon.in/s?k=Nutriverse+Makhana" target="_blank" rel="noopener">Shop now</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="login.html">Log in</a>
     </nav>
   </header>
 
@@ -168,7 +171,7 @@
           <h1>ROASTED IN OLIVE.<em>Unlike the rest.</em></h1>
           <p class="hero-lead">Makhana, roasted in olive oil. Never fried. No palm oil. Light, crunchy snacks that actually keep up with real life — plus millet cookies and Maknova at ₹10.</p>
           <div class="hero-actions">
-            <a class="btn btn-dark" href="products.html">Explore the crunch</a>
+            <a class="btn btn-dark" href="products.html">Shop the crunch</a>
             <a class="btn btn-outline" href="#partner">Partner with us</a>
           </div>
           <div class="hero-pills">
@@ -315,36 +318,50 @@
               <img src="assets/mixmasala.png" alt="Mix Masala makhana">
               <h3>Mix Masala</h3>
               <p>Bold desi punch. Roasted in olive oil.</p>
+              <div class="price-row"><span class="price">₹149</span></div>
+              <button type="button" class="btn btn-dark" data-add="mix-masala">Add to cart</button>
             </article>
             <article class="hit-card c-onion">
               <img src="assets/creamonion.webp" alt="Cream & Onion makhana">
               <h3>Cream &amp; Onion</h3>
               <p>Smooth. Savoury. Everyday addictive.</p>
+              <div class="price-row"><span class="price">₹149</span></div>
+              <button type="button" class="btn btn-dark" data-add="cream-onion">Add to cart</button>
             </article>
             <article class="hit-card c-cheese">
               <img src="assets/product.png" alt="Cheesy Twistah makhana">
               <h3>Cheesy Twistah</h3>
               <p>The cheese hit, without the fryer.</p>
+              <div class="price-row"><span class="price">₹149</span></div>
+              <button type="button" class="btn btn-dark" data-add="cheesy-twistah">Add to cart</button>
             </article>
             <article class="hit-card c-peri">
               <img src="assets/product.png" alt="Peri Punch makhana">
               <h3>Peri Punch</h3>
               <p>Spicy kick. Built for snack breaks.</p>
+              <div class="price-row"><span class="price">₹149</span></div>
+              <button type="button" class="btn btn-dark" data-add="peri-punch">Add to cart</button>
             </article>
             <article class="hit-card c-salt">
               <img src="assets/product.png" alt="Himalayan Salt makhana">
               <h3>Himalayan Salt</h3>
               <p>Clean, minimal, dangerously moreish.</p>
+              <div class="price-row"><span class="price">₹149</span></div>
+              <button type="button" class="btn btn-dark" data-add="himalayan-salt">Add to cart</button>
             </article>
             <article class="hit-card c-mint">
               <img src="assets/mixmasala.png" alt="Mint O Magic makhana">
               <h3>Mint O Magic</h3>
               <p>Fresh crunch energy. Unexpected favourite.</p>
+              <div class="price-row"><span class="price">₹149</span></div>
+              <button type="button" class="btn btn-dark" data-add="mint-o-magic">Add to cart</button>
             </article>
             <article class="hit-card c-cookie">
               <img src="assets/cookies.png" alt="Makhana millet cookies">
               <h3>Millet Cookies</h3>
               <p>No maida. No palm oil. No refined sugar.</p>
+              <div class="price-row"><span class="price">₹99</span></div>
+              <button type="button" class="btn btn-dark" data-add="millet-cookies">Add to cart</button>
             </article>
           </div>
         </div>
@@ -477,6 +494,9 @@
     </div>
   </footer>
 
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/auth.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

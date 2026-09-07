@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your account | Nutriverse</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500;1,9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="announce">Your crunch, on record</div>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a href="/" class="logo"><img src="assets/logo.png" alt="Nutriverse"></a>
+      <nav class="nav-desktop">
+        <a href="/">Home</a>
+        <a href="products.html">Products</a>
+        <a href="account.html" class="active">Account</a>
+      </nav>
+      <a class="header-cta" href="products.html">Shop</a>
+      <button type="button" class="cart-btn" data-open-cart>Cart <span class="cart-count">0</span></button>
+      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+    </div>
+    <nav class="nav-mobile">
+      <a href="/">Home</a>
+      <a href="products.html">Products</a>
+      <a href="account.html">Account</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="page-hero">
+      <p class="section-kicker">Account</p>
+      <h1>YOUR ORDERS.</h1>
+      <p class="subcopy" id="who" style="margin-top:12px"></p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+        <a class="btn btn-dark" href="products.html">Shop again</a>
+        <button class="btn btn-outline" type="button" id="logout">Log out</button>
+        <a class="btn btn-outline" href="admin.html" id="admin-link" hidden>Admin dashboard</a>
+      </div>
+    </section>
+    <div id="orders" class="order-list"></div>
+  </main>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="script.js"></script>
+  <script>
+    (async function () {
+      const u = await NVAuth.user();
+      if (!u) {
+        location.href = "login.html?next=account.html";
+        return;
+      }
+      document.getElementById("who").textContent = u.email;
+      if (await NVAuth.isAdmin()) document.getElementById("admin-link").hidden = false;
+      document.getElementById("logout").onclick = async () => {
+        await NVAuth.signOut();
+        location.href = "login.html";
+      };
+      const token = await NVAuth.accessToken();
+      const res = await fetch("/api/my-orders", { headers: { Authorization: "Bearer " + token } });
+      const data = await res.json();
+      const box = document.getElementById("orders");
+      const rupees = window.NV ? NV.rupees : (n) => "₹" + n;
+      if (!res.ok) {
+        box.innerHTML = `<p class="form-error">${data.error || "Could not load orders."}</p>`;
+        return;
+      }
+      if (!data.orders || !data.orders.length) {
+        box.innerHTML = `<div class="order-box"><p>No orders yet. The makhana is waiting.</p><a class="btn btn-dark" href="products.html">Shop</a></div>`;
+        return;
+      }
+      box.innerHTML = data.orders.map((o) => `
+        <article class="order-box" style="margin-bottom:16px">
+          <p class="section-kicker">${o.status} · ${o.payment}</p>
+          <h3>${o.id}</h3>
+          <p class="subcopy">${new Date(o.created_at).toLocaleString("en-IN")}</p>
+          ${(o.items || []).map((l) => `<p>${l.name} × ${l.qty}</p>`).join("")}
+          <p><strong>${rupees(o.total)}</strong></p>
+        </article>
+      `).join("");
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log in | Nutriverse</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500;1,9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="announce">Save orders · track crunch</div>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a href="/" class="logo"><img src="assets/logo.png" alt="Nutriverse"></a>
+      <nav class="nav-desktop">
+        <a href="/">Home</a>
+        <a href="products.html">Products</a>
+      </nav>
+      <a class="header-cta" href="products.html">Shop</a>
+      <button type="button" class="cart-btn" data-open-cart>Cart <span class="cart-count">0</span></button>
+      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+    </div>
+    <nav class="nav-mobile">
+      <a href="/">Home</a>
+      <a href="products.html">Products</a>
+      <a href="login.html">Log in</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="page-hero">
+      <p class="section-kicker">Account</p>
+      <h1>LOG IN.<br><em style="font-family:var(--font-serif);font-style:italic;color:var(--forest)">or join.</em></h1>
+    </section>
+    <div class="auth-card">
+      <div class="filter-row" style="margin-top:0">
+        <button type="button" class="filter-btn active" id="tab-login">Log in</button>
+        <button type="button" class="filter-btn" id="tab-signup">Create account</button>
+      </div>
+      <form id="login-form">
+        <div class="field"><label>Email</label><input type="email" name="email" required autocomplete="email"></div>
+        <div class="field"><label>Password</label><input type="password" name="password" required minlength="6" autocomplete="current-password"></div>
+        <p class="form-error" id="login-error"></p>
+        <button class="btn btn-dark" type="submit">Log in</button>
+      </form>
+      <form id="signup-form" hidden>
+        <div class="field"><label>Name</label><input name="name" required autocomplete="name"></div>
+        <div class="field"><label>Email</label><input type="email" name="email" required autocomplete="email"></div>
+        <div class="field"><label>Password</label><input type="password" name="password" required minlength="6" autocomplete="new-password"></div>
+        <p class="form-error" id="signup-error"></p>
+        <button class="btn btn-dark" type="submit">Create account</button>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="script.js"></script>
+  <script>
+    const next = new URLSearchParams(location.search).get("next") || "account.html";
+    document.getElementById("tab-login").onclick = () => {
+      document.getElementById("login-form").hidden = false;
+      document.getElementById("signup-form").hidden = true;
+      document.getElementById("tab-login").classList.add("active");
+      document.getElementById("tab-signup").classList.remove("active");
+    };
+    document.getElementById("tab-signup").onclick = () => {
+      document.getElementById("login-form").hidden = true;
+      document.getElementById("signup-form").hidden = false;
+      document.getElementById("tab-signup").classList.add("active");
+      document.getElementById("tab-login").classList.remove("active");
+    };
+    document.getElementById("login-form").onsubmit = async (e) => {
+      e.preventDefault();
+      const err = document.getElementById("login-error");
+      err.textContent = "";
+      const data = new FormData(e.target);
+      try {
+        await NVAuth.signIn(data.get("email"), data.get("password"));
+        location.href = next;
+      } catch (ex) { err.textContent = ex.message; }
+    };
+    document.getElementById("signup-form").onsubmit = async (e) => {
+      e.preventDefault();
+      const err = document.getElementById("signup-error");
+      err.textContent = "";
+      const data = new FormData(e.target);
+      try {
+        const result = await NVAuth.signUp(data.get("email"), data.get("password"), data.get("name"));
+        if (result.session) location.href = next;
+        else err.textContent = "Check your email to confirm the account, then log in.";
+      } catch (ex) { err.textContent = ex.message; }
+    };
+  </script>
+</body>
+</html>

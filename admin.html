@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Nutriverse</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500;1,9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="announce">Admin · orders</div>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a href="/" class="logo"><img src="assets/logo.png" alt="Nutriverse"></a>
+      <nav class="nav-desktop">
+        <a href="account.html">Account</a>
+        <a href="admin.html" class="active">Admin</a>
+      </nav>
+      <a class="header-cta" href="products.html">Store</a>
+      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+    </div>
+    <nav class="nav-mobile">
+      <a href="account.html">Account</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="page-hero">
+      <p class="section-kicker">Dashboard</p>
+      <h1>ORDERS.</h1>
+      <p class="subcopy" style="margin-top:12px">Log in as <strong>contact@thenutriverse.in</strong> to manage status.</p>
+    </section>
+    <p class="form-error" id="admin-error"></p>
+    <div class="table-wrap">
+      <table class="admin-table" id="admin-table">
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>When</th>
+            <th>Customer</th>
+            <th>Pay</th>
+            <th>Total</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="js/products.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="script.js"></script>
+  <script>
+    const statuses = ["pending", "paid", "packed", "shipped", "delivered", "cancelled"];
+    (async function () {
+      const err = document.getElementById("admin-error");
+      if (!(await NVAuth.isAdmin())) {
+        const u = await NVAuth.user();
+        if (!u) location.href = "login.html?next=admin.html";
+        else err.textContent = "This dashboard is only for the brand login (contact@thenutriverse.in).";
+        return;
+      }
+      const token = await NVAuth.accessToken();
+      const headers = { Authorization: "Bearer " + token, "Content-Type": "application/json" };
+      const res = await fetch("/api/admin-orders", { headers });
+      const data = await res.json();
+      if (!res.ok) {
+        err.textContent = data.error || "Could not load orders.";
+        return;
+      }
+      const rupees = window.NV ? NV.rupees : (n) => "₹" + n;
+      const tb = document.querySelector("#admin-table tbody");
+      tb.innerHTML = (data.orders || []).map((o) => {
+        const c = o.customer || {};
+        const opts = statuses.map((s) => `<option value="${s}" ${s === o.status ? "selected" : ""}>${s}</option>`).join("");
+        return `<tr>
+          <td><strong>${o.id}</strong><br><small>${(o.items || []).map((i) => i.name + " × " + i.qty).join(", ")}</small></td>
+          <td>${new Date(o.created_at).toLocaleString("en-IN")}</td>
+          <td>${c.name || ""}<br><small>${c.phone || ""} · ${c.city || ""}</small></td>
+          <td>${o.payment}</td>
+          <td>${rupees(o.total)}</td>
+          <td><select data-id="${o.id}">${opts}</select></td>
+        </tr>`;
+      }).join("") || `<tr><td colspan="6">No orders yet.</td></tr>`;
+
+      tb.addEventListener("change", async (e) => {
+        const sel = e.target.closest("select[data-id]");
+        if (!sel) return;
+        const patch = await fetch("/api/admin-orders", {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify({ id: sel.getAttribute("data-id"), status: sel.value })
+        });
+        const body = await patch.json();
+        if (!patch.ok) err.textContent = body.error || "Update failed.";
+        else err.textContent = "";
+      });
+    })();
+  </script>
+</body>
+</html>

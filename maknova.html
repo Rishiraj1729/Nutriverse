@@ -286,14 +286,15 @@
         <a href="about.html">About</a>
         <a href="maknova.html" class="active">Maknova</a>
       </nav>
-      <a class="header-cta" href="https://instagram.com/have.maknova" target="_blank" rel="noopener">@have.maknova</a>
-      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+      <button type="button" class="cart-btn" data-open-cart aria-label="Open cart">Cart <span class="cart-count">0</span></button>
+        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
     </div>
     <nav class="nav-mobile">
       <a href="/">Home</a>
       <a href="products.html">Products</a>
       <a href="about.html">About</a>
       <a href="maknova.html">Maknova</a>
+      <a href="checkout.html">Checkout</a>
     </nav>
   </header>
 
@@ -318,16 +319,19 @@
         <p class="tag">Bestseller · ₹10</p>
         <h3 style="font-family:var(--font-display);font-size:40px;margin:24px 0 8px">MASALA MASTI</h3>
         <p>Bold, spiced, roasted. The kirana counter hero.</p>
+        <button type="button" class="btn btn-dark" data-add="maknova-masala">Add to cart</button>
       </article>
       <article class="flavour-card f-cheese">
         <p class="tag">₹10</p>
         <h3 style="font-family:var(--font-display);font-size:40px;margin:24px 0 8px">CHEESE</h3>
         <p>Rich, creamy cheese crunch. Lighter than chips.</p>
+        <button type="button" class="btn btn-dark" data-add="maknova-cheese">Add to cart</button>
       </article>
       <article class="flavour-card f-tomato">
         <p class="tag">₹10</p>
         <h3 style="font-family:var(--font-display);font-size:40px;margin:24px 0 8px">TANGY TOMATO</h3>
         <p>Sharp, zesty, addictive. The one you open twice.</p>
+        <button type="button" class="btn btn-dark" data-add="maknova-tomato">Add to cart</button>
       </article>
     </div>
   </main>
@@ -426,6 +430,9 @@
     <p>Maknova is the only flavoured makhana brand in India at ₹10. Made by Nutriverse. Available in Masala Masti, Cheese, and Tangy Tomato.</p>
   </div>
 
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/auth.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
