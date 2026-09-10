@@ -1,5 +1,8 @@
 {
   "name": "nutriverse",
   "private": true,
-  "description": "Nutriverse brand site and on-site store"
+  "description": "Nutriverse brand site and on-site store",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
 }
